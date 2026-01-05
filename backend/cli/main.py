@@ -14,7 +14,10 @@ from backend.store import get_store
 
 def render_job_line(job: Dict[str, object]) -> str:
     decision = job.get("decision", "pending")
-    return f"{job.get('id')} [{decision}] - {job.get('title')} @ {job.get('company')} ({job.get('location')})"
+    title = job.get("title") or "(titre inconnu)"
+    company = job.get("company") or "?"
+    location = job.get("location") or "?"
+    return f"{job.get('id')} [{decision}] - {title} @ {company} ({location})"
 
 
 def cmd_load_sample(_: argparse.Namespace):
@@ -63,8 +66,13 @@ def cmd_list(args: argparse.Namespace):
         remote=args.remote,
         emp_type=args.type,
     )
+    if args.limit:
+        jobs = jobs[: args.limit]
     if not jobs:
         print("Aucune offre à afficher.")
+        return
+    if args.json:
+        print(json.dumps(jobs, indent=2, ensure_ascii=False))
         return
     for job in jobs:
         print(render_job_line(job))
@@ -85,6 +93,9 @@ def cmd_show(args: argparse.Namespace):
         job = store.get_job(args.job_id)
     except KeyError:
         raise SystemExit(f"Offre introuvable: {args.job_id}")
+    if args.json:
+        print(json.dumps(job, indent=2, ensure_ascii=False))
+        return
     decision = job.get("decision", "pending")
     decided_at = job.get("decided_at")
     print(render_job_line(job))
@@ -159,10 +170,13 @@ def build_parser() -> argparse.ArgumentParser:
         choices=["full-time", "internship", "contract", "part-time"],
         help="Filtrer sur employment_type",
     )
+    p_list.add_argument("--limit", type=int, help="Limiter le nombre de résultats")
+    p_list.add_argument("--json", action="store_true", help="Sortie JSON complète")
     p_list.set_defaults(func=cmd_list)
 
     p_show = sub.add_parser("show", help="Afficher le détail d'une offre")
     p_show.add_argument("job_id", help="Identifiant d'offre")
+    p_show.add_argument("--json", action="store_true", help="Sortie JSON brute")
     p_show.set_defaults(func=cmd_show)
 
     p_swipe = sub.add_parser("swipe", help="Enregistrer un swipe yes/no")

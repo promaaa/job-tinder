@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Job Tinder</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --panel: #111827;
+      --muted: #94a3b8;
+      --text: #e2e8f0;
+      --accent: #22d3ee;
+      --danger: #f87171;
+      --success: #4ade80;
+      --border: #1f2937;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Inter", system-ui, -apple-system, sans-serif;
+      background: radial-gradient(circle at 10% 20%, rgba(34,211,238,0.08), transparent 25%),
+                  radial-gradient(circle at 90% 10%, rgba(74,222,128,0.06), transparent 25%),
+                  var(--bg);
+      color: var(--text);
+    }
+    header {
+      padding: 16px 20px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 12px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(17,24,39,0.92);
+      backdrop-filter: blur(6px);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .title {
+      font-weight: 700;
+      letter-spacing: 0.2px;
+    }
+    .controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+    .stats { display: flex; gap: 10px; align-items: center; color: var(--muted); font-size: 13px; }
+    button, select, input {
+      background: var(--panel);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-size: 14px;
+    }
+    button { cursor: pointer; transition: transform 120ms ease, border-color 120ms ease; }
+    button:hover { transform: translateY(-1px); border-color: var(--accent); }
+    button:active { transform: translateY(0); }
+    .pill-group button {
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: transparent;
+    }
+    .pill-group button.active { background: rgba(34,211,238,0.15); border-color: var(--accent); }
+    .jobs {
+      padding: 20px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 16px;
+    }
+    .card {
+      background: rgba(17,24,39,0.9);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+    }
+    .muted { color: var(--muted); font-size: 13px; }
+    .tags { display: flex; flex-wrap: wrap; gap: 6px; }
+    .tag {
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: rgba(148,163,184,0.12);
+      border: 1px solid var(--border);
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .actions { display: flex; gap: 8px; }
+    .btn-yes { border-color: var(--success); color: var(--success); }
+    .btn-no { border-color: var(--danger); color: var(--danger); }
+    .status-dot {
+      width: 10px; height: 10px; border-radius: 50%; display: inline-block; margin-right: 6px;
+    }
+    .dot-pending { background: var(--muted); }
+    .dot-yes { background: var(--success); }
+    .dot-no { background: var(--danger); }
+    .empty { text-align: center; padding: 80px 20px; color: var(--muted); }
+    @media (max-width: 600px) {
+      header { position: sticky; top: 0; }
+      .jobs { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="title">Job Tinder</div>
+    <div class="controls">
+      <div class="pill-group" id="status-filters"></div>
+      <input id="search" type="search" placeholder="Rechercher (titre, entreprise, tags)" />
+      <button id="refresh">Rafraîchir</button>
+    </div>
+    <div class="stats" id="stats"></div>
+  </header>
+  <main class="jobs" id="jobs"></main>
+  <div class="empty" id="empty" style="display:none;">Aucune offre trouvée.</div>
+
+  <script>
+    const statusFilters = [
+      { key: 'pending', label: 'Pending' },
+      { key: 'yes', label: 'Yes' },
+      { key: 'no', label: 'No' },
+      { key: 'all', label: 'All' },
+    ];
+
+    const cached = JSON.parse(localStorage.getItem('jobtinder-ui') || '{}');
+    const state = { status: cached.status || 'pending', query: cached.query || '' };
+    const jobsEl = document.getElementById('jobs');
+    const emptyEl = document.getElementById('empty');
+    const statsEl = document.getElementById('stats');
+    const searchEl = document.getElementById('search');
+    searchEl.value = state.query;
+
+    function renderFilters() {
+      const container = document.getElementById('status-filters');
+      container.innerHTML = '';
+      statusFilters.forEach(f => {
+        const btn = document.createElement('button');
+        btn.textContent = f.label;
+        btn.className = f.key === state.status ? 'active' : '';
+        btn.onclick = () => { state.status = f.key; persist(); fetchAll(); renderFilters(); };
+        container.appendChild(btn);
+      });
+    }
+
+    function statusDot(decision) {
+      const span = document.createElement('span');
+      span.className = 'status-dot ' + (decision === 'yes' ? 'dot-yes' : decision === 'no' ? 'dot-no' : 'dot-pending');
+      return span;
+    }
+
+    async function swipe(jobId, decision) {
+      const res = await fetch('/swipes', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ job_id: jobId, decision })
+      });
+      if (!res.ok) {
+        alert('Erreur swipe');
+        return;
+      }
+      fetchAll();
+    }
+
+    function persist() {
+      localStorage.setItem('jobtinder-ui', JSON.stringify({ status: state.status, query: state.query }));
+    }
+
+    function renderJobs(items) {
+      jobsEl.innerHTML = '';
+      if (!items.length) {
+        emptyEl.style.display = 'block';
+        return;
+      }
+      emptyEl.style.display = 'none';
+      items.forEach(job => {
+        const card = document.createElement('div');
+        card.className = 'card';
+
+        const title = document.createElement('div');
+        title.innerHTML = `${job.title || 'Sans titre'} <span class="muted">@ ${job.company || '?'} · ${job.location || '?'}</span>`;
+        card.appendChild(title);
+
+        const meta = document.createElement('div');
+        meta.className = 'muted';
+        meta.textContent = `${job.employment_type || ''} · Remote: ${job.is_remote ? 'oui' : 'non'} · ${job.seniority || ''}`;
+        card.appendChild(meta);
+
+        const desc = document.createElement('div');
+        desc.className = 'muted';
+        desc.textContent = (job.description || '').slice(0, 180) + ((job.description || '').length > 180 ? '…' : '');
+        card.appendChild(desc);
+
+        const tags = document.createElement('div');
+        tags.className = 'tags';
+        (job.tags || []).forEach(t => {
+          const tag = document.createElement('span');
+          tag.className = 'tag';
+          tag.textContent = t;
+          tags.appendChild(tag);
+        });
+        card.appendChild(tags);
+
+        const statusRow = document.createElement('div');
+        statusRow.className = 'muted';
+        statusRow.appendChild(statusDot(job.decision || 'pending'));
+        const decisionText = document.createElement('span');
+        decisionText.textContent = (job.decision || 'pending').toUpperCase();
+        statusRow.appendChild(decisionText);
+        card.appendChild(statusRow);
+
+        const actions = document.createElement('div');
+        actions.className = 'actions';
+        const yesBtn = document.createElement('button');
+        yesBtn.textContent = 'Yes';
+        yesBtn.className = 'btn-yes';
+        yesBtn.onclick = () => swipe(job.id, 'yes');
+        const noBtn = document.createElement('button');
+        noBtn.textContent = 'No';
+        noBtn.className = 'btn-no';
+        noBtn.onclick = () => swipe(job.id, 'no');
+        const openBtn = document.createElement('button');
+        openBtn.textContent = 'Ouvrir';
+        openBtn.onclick = () => window.open(job.url || '#', '_blank');
+        actions.append(yesBtn, noBtn, openBtn);
+        card.appendChild(actions);
+
+        jobsEl.appendChild(card);
+      });
+    }
+
+    async function fetchJobs() {
+      const params = new URLSearchParams({ status: state.status });
+      if (state.query.trim()) params.set('query', state.query.trim());
+      const res = await fetch('/jobs?' + params.toString());
+      if (!res.ok) {
+        jobsEl.innerHTML = '<div class="empty">Erreur de chargement.</div>';
+        return;
+      }
+      const data = await res.json();
+      renderJobs(data.items || []);
+    }
+
+    async function fetchStats() {
+      const res = await fetch('/stats');
+      if (!res.ok) { return; }
+      const s = await res.json();
+      statsEl.textContent = `Total ${s.total || 0} · Yes ${s.yes || 0} · No ${s.no || 0} · Pending ${s.pending || 0}`;
+    }
+
+    document.getElementById('search').addEventListener('input', (e) => {
+      state.query = e.target.value;
+      persist();
+      // debounce-lite
+      clearTimeout(window.__searchTimer);
+      window.__searchTimer = setTimeout(fetchJobs, 250);
+    });
+    document.getElementById('refresh').onclick = () => { fetchAll(); };
+
+    renderFilters();
+    fetchAll();
+
+    function fetchAll() {
+      fetchJobs();
+      fetchStats();
+    }
+  </script>
+</body>
+</html>

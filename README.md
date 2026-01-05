@@ -27,6 +27,7 @@ Voir `docs/cli.md` pour tous les exemples.
 ```sh
 python backend/cli/main.py load-sample
 python backend/cli/main.py list --status pending
+python backend/cli/main.py list --limit 10 --json
 python backend/cli/main.py swipe job-001 yes
 python backend/cli/main.py adapt-cv job-001 "Backend" --model gpt-4.1
 python backend/cli/main.py ingest ./data/mon_feed.json --replace
@@ -36,10 +37,12 @@ python backend/cli/main.py ingest ./data/mon_feed.json --replace
 ```sh
 export JOB_TINDER_ROOT=$PWD  # optionnel
 uvicorn backend.api.app:app --reload
-# endpoints: /health, /jobs, /jobs/{id}, /swipes (POST), /adapt-cv (POST), /ingest (POST)
+# endpoints: /health, /jobs, /jobs/{id}, /swipes (POST), /adapt-cv (POST), /ingest (POST), /stats
 # ou
 make api
 ```
+
+UI: une interface légère est servie sur `/ui` (liste, recherche, swipe yes/no) quand `frontend/` est présent.
 
 Store:
 - Par défaut `STORE=json` (fichiers dans `data/`).
@@ -59,6 +62,7 @@ make pg-up                                  # démarre Postgres 15 (user/pass/db
 make pg-init                                # applique docs/schema.sql (via PG_DSN par défaut)
 make pg-seed                                # charge data/sample_jobs.json
 make pg-list                                # visualise les offres
+make pg-reset                               # drop volume + redémarrage (réinitialise la base)
 STORE=pg PG_DSN=postgres://jobtinder:jobtinder@localhost:5432/job_tinder make api  # API en mode pg
 ```
 Stopper la base: `make pg-down`. Logs: `make pg-logs`.

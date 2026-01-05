@@ -1,6 +1,8 @@
+from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 from fastapi import FastAPI, HTTPException
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
 from backend.store import get_store
@@ -31,9 +33,21 @@ class IngestPayload(BaseModel):
 app = FastAPI(title="Job Tinder API", version="0.1.0")
 
 
+# Serve simple frontend
+FRONTEND_DIR = Path(__file__).resolve().parents[2] / "frontend"
+if FRONTEND_DIR.exists():
+    app.mount("/ui", StaticFiles(directory=str(FRONTEND_DIR), html=True), name="ui")
+
+
 @app.get("/health")
 def health():
     return {"status": "ok"}
+
+
+@app.get("/stats")
+def stats():
+    store = get_store()
+    return store.stats()
 
 
 @app.get("/jobs")

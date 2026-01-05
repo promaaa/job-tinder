@@ -3,7 +3,7 @@ PIP?=/Users/user/Documents/code/job-tinder/.venv/bin/pip
 COMPOSE?=docker compose
 PG_DSN?=postgres://jobtinder:jobtinder@localhost:5432/job_tinder
 
-.PHONY: install test api pg-up pg-down pg-logs pg-init pg-seed pg-list api-pg
+.PHONY: install test api pg-up pg-down pg-logs pg-init pg-seed pg-list api-pg pg-reset
 
 install:
 	$(PIP) install -r backend/requirements.txt
@@ -22,6 +22,10 @@ pg-up:
 
 pg-down:
 	$(COMPOSE) down
+
+pg-reset:
+	$(COMPOSE) down -v
+	$(COMPOSE) up -d postgres
 
 pg-logs:
 	$(COMPOSE) logs -f postgres
