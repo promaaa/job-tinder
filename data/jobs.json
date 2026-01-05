@@ -1,0 +1,34 @@
+[
+  {
+    "id": "job-002",
+    "title": "Data Analyst",
+    "company": "InsightLab Updated",
+    "location": "Lyon",
+    "employment_type": "internship",
+    "seniority": "intern",
+    "is_remote": false,
+    "url": "https://example.com/job-002",
+    "description": "SQL et dashboards",
+    "tags": [
+      "sql",
+      "tableau"
+    ],
+    "published_at": "2024-12-20T09:00:00Z"
+  },
+  {
+    "id": "job-003",
+    "title": "PM IA",
+    "company": "NovaAI",
+    "location": "Remote",
+    "employment_type": "contract",
+    "seniority": "senior",
+    "is_remote": true,
+    "url": "https://example.com/job-003",
+    "description": "Roadmap IA",
+    "tags": [
+      "product",
+      "ai"
+    ],
+    "published_at": "2024-12-01T08:00:00Z"
+  }
+]

@@ -1,0 +1,24 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: job-tinder-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: job_tinder
+      POSTGRES_USER: jobtinder
+      POSTGRES_PASSWORD: jobtinder
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U jobtinder -d job_tinder"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+      start_period: 5s
+
+volumes:
+  pgdata:

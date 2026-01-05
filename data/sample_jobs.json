@@ -1,0 +1,41 @@
+[
+  {
+    "id": "job-001",
+    "title": "Développeur Backend Python",
+    "company": "DataForge",
+    "location": "Paris, FR",
+    "employment_type": "full-time",
+    "seniority": "mid",
+    "is_remote": true,
+    "url": "https://jobs.example.com/dataforge/backend-python",
+    "description": "Conception d'APIs, optimisation de performances, pipelines de données.",
+    "tags": ["python", "fastapi", "postgres", "docker"],
+    "published_at": "2024-12-12T10:00:00Z"
+  },
+  {
+    "id": "job-002",
+    "title": "Data Analyst Stage",
+    "company": "InsightLab",
+    "location": "Lyon, FR",
+    "employment_type": "internship",
+    "seniority": "intern",
+    "is_remote": false,
+    "url": "https://jobs.example.com/insightlab/data-analyst-intern",
+    "description": "SQL, visualisation, analyses exploratoires pour équipes produit.",
+    "tags": ["sql", "tableau", "python"],
+    "published_at": "2024-12-20T09:00:00Z"
+  },
+  {
+    "id": "job-003",
+    "title": "Product Manager IA",
+    "company": "NovaAI",
+    "location": "Remote",
+    "employment_type": "contract",
+    "seniority": "senior",
+    "is_remote": true,
+    "url": "https://jobs.example.com/novaai/pm-ia",
+    "description": "Piloter roadmap IA, discovery utilisateurs, coordination engineering.",
+    "tags": ["product", "ai", "user-research"],
+    "published_at": "2024-12-05T08:30:00Z"
+  }
+]
