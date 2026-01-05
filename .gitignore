@@ -1,0 +1,13 @@
+# Virtual env
+.venv/
+
+# Bytecode / caches
+__pycache__/
+*.py[cod]
+
+# Editor/OS
+.DS_Store
+.vscode/
+
+# Local data overrides
+.env
