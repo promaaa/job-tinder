@@ -275,3 +275,51 @@ async def search_and_import(
     
     return result
 
+
+# --- Scheduler / Auto-fetch ---
+
+
+@app.get("/scheduler/status")
+def scheduler_status():
+    """Statut du scheduler d'import automatique."""
+    from backend.ingestion.scheduler import get_scheduler
+    scheduler = get_scheduler()
+    return scheduler.get_status()
+
+
+@app.post("/scheduler/fetch")
+async def scheduler_fetch_now(
+    queries: Optional[str] = None,
+):
+    """
+    Lancer une récupération immédiate depuis toutes les sources gratuites.
+    
+    - queries: requêtes de recherche séparées par virgule (optionnel)
+    """
+    from backend.ingestion.scheduler import JobScheduler
+    
+    query_list = queries.split(",") if queries else None
+    
+    scheduler = JobScheduler(queries=query_list)
+    store = get_store()
+    
+    result = await scheduler.fetch_all(store)
+    return result
+
+
+@app.post("/scheduler/fetch/full")
+async def scheduler_full_fetch():
+    """
+    Récupération complète avec toutes les requêtes par défaut.
+    
+    Lance une recherche sur: python, javascript, data engineer, devops, etc.
+    """
+    from backend.ingestion.scheduler import JobScheduler
+    
+    scheduler = JobScheduler()
+    store = get_store()
+    
+    result = await scheduler.fetch_all(store)
+    return result
+
+

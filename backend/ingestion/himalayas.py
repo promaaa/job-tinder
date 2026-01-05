@@ -29,7 +29,7 @@ class HimalayasSource(JobSource):
         """Search Himalayas job listings."""
         async with httpx.AsyncClient(timeout=30) as client:
             params = {
-                "limit": min(limit * 2, 100),
+                "limit": min(limit * 3, 100),
             }
             
             response = await client.get(
@@ -44,21 +44,25 @@ class HimalayasSource(JobSource):
             
             jobs = data.get("jobs", [])
             
-            # Filter by query
-            query_lower = query.lower()
-            filtered = []
-            for job in jobs:
-                categories = job.get("categories", [])
-                if isinstance(categories, list):
-                    categories_str = " ".join(categories)
-                else:
-                    categories_str = str(categories)
-                    
-                searchable = f"{job.get('title', '')} {job.get('companyName', '')} {job.get('description', '')} {categories_str}".lower()
-                if query_lower in searchable:
-                    filtered.append(job)
+            # Filter by query - more lenient matching
+            if query and query.strip():
+                query_lower = query.lower()
+                query_words = query_lower.split()
+                filtered = []
+                for job in jobs:
+                    categories = job.get("categories", [])
+                    if isinstance(categories, list):
+                        categories_str = " ".join(str(c) for c in categories)
+                    else:
+                        categories_str = str(categories) if categories else ""
+                        
+                    searchable = f"{job.get('title', '')} {job.get('companyName', '')} {job.get('description', '')} {categories_str}".lower()
+                    # Match any word from query
+                    if any(word in searchable for word in query_words):
+                        filtered.append(job)
+                jobs = filtered if filtered else jobs[:limit]  # Fall back to top jobs
             
-            return [self._parse_job(job) for job in filtered[:limit]]
+            return [self._parse_job(job) for job in jobs[:limit]]
 
     async def fetch_details(self, job_id: str) -> Optional[JobData]:
         """Fetch job by ID."""
@@ -78,15 +82,22 @@ class HimalayasSource(JobSource):
         
         # Location/timezones
         timezones = data.get("timezones", [])
-        location = ", ".join(timezones[:3]) if timezones else "Remote Worldwide"
+        if isinstance(timezones, list):
+            location = ", ".join(str(t) for t in timezones[:3]) if timezones else "Remote Worldwide"
+        else:
+            location = str(timezones) if timezones else "Remote Worldwide"
         
         # Tags from categories
         tags = data.get("categories", [])
         if not isinstance(tags, list):
-            tags = []
+            tags = [str(tags)] if tags else []
+        tags = [str(t) for t in tags]  # Ensure all are strings
         
-        # Seniority
+        # Seniority (can be a list)
         seniority = data.get("seniority", "")
+        if isinstance(seniority, list):
+            seniority = " ".join(str(s) for s in seniority)
+        seniority = str(seniority) if seniority else ""
         
         return JobData(
             title=data.get("title", "Sans titre"),

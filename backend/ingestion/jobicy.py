@@ -30,18 +30,18 @@ class JobicySource(JobSource):
         """Search Jobicy job listings."""
         async with httpx.AsyncClient(timeout=30) as client:
             params = {
-                "count": min(limit * 2, 50),  # Get more to filter
-                "tag": query,  # Jobicy uses tags for filtering
+                "count": min(limit * 3, 50),  # Get more to filter
             }
             
             # Industry filter options: marketing, design, dev, finance, etc.
-            if any(kw in query.lower() for kw in ["python", "javascript", "developer", "engineer", "backend", "frontend", "fullstack"]):
+            query_lower = query.lower()
+            if any(kw in query_lower for kw in ["python", "javascript", "developer", "engineer", "backend", "frontend", "fullstack", "java", "go", "rust", "node"]):
                 params["industry"] = "dev"
-            elif any(kw in query.lower() for kw in ["design", "ui", "ux", "figma"]):
+            elif any(kw in query_lower for kw in ["design", "ui", "ux", "figma"]):
                 params["industry"] = "design"
-            elif any(kw in query.lower() for kw in ["marketing", "seo", "growth"]):
+            elif any(kw in query_lower for kw in ["marketing", "seo", "growth"]):
                 params["industry"] = "marketing"
-            elif any(kw in query.lower() for kw in ["data", "analyst", "analytics"]):
+            elif any(kw in query_lower for kw in ["data", "analyst", "analytics", "science"]):
                 params["industry"] = "data"
             
             response = await client.get(
@@ -56,15 +56,24 @@ class JobicySource(JobSource):
             
             jobs = data.get("jobs", [])
             
-            # Additional filtering by query
-            query_lower = query.lower()
-            filtered = []
-            for job in jobs:
-                searchable = f"{job.get('jobTitle', '')} {job.get('companyName', '')} {job.get('jobDescription', '')} {' '.join(job.get('jobIndustry', []))}".lower()
-                if query_lower in searchable or not query:
-                    filtered.append(job)
+            # Filter by query if specific keywords provided
+            if query and query.strip():
+                filtered = []
+                for job in jobs:
+                    industries = job.get("jobIndustry", [])
+                    if isinstance(industries, str):
+                        industries = [industries]
+                    elif not isinstance(industries, list):
+                        industries = []
+                    industries_str = " ".join(str(i) for i in industries)
+                    searchable = f"{job.get('jobTitle', '')} {job.get('companyName', '')} {job.get('jobDescription', '')} {industries_str}".lower()
+                    # More lenient matching - check if any word from query matches
+                    query_words = query_lower.split()
+                    if any(word in searchable for word in query_words):
+                        filtered.append(job)
+                jobs = filtered if filtered else jobs  # Fall back to all if no matches
             
-            return [self._parse_job(job) for job in filtered[:limit]]
+            return [self._parse_job(job) for job in jobs[:limit]]
 
     async def fetch_details(self, job_id: str) -> Optional[JobData]:
         """Jobicy doesn't have a single job endpoint."""
@@ -90,10 +99,13 @@ class JobicySource(JobSource):
         
         # Job type
         job_type = data.get("jobType", "")
+        if isinstance(job_type, list):
+            job_type = " ".join(str(t) for t in job_type)
+        job_type = str(job_type).lower()
         employment_type = "CDI"
-        if "contract" in job_type.lower():
+        if "contract" in job_type:
             employment_type = "freelance"
-        elif "part" in job_type.lower():
+        elif "part" in job_type:
             employment_type = "temps partiel"
         
         # Location
