@@ -123,6 +123,8 @@
     .modal h3 { margin: 0 0 6px 0; }
     .modal .muted { margin-bottom: 10px; }
     .modal .actions { justify-content: flex-end; }
+    .modal .field { margin: 8px 0; }
+    .modal input { width: 100%; }
     @media (max-width: 600px) {
       header { position: sticky; top: 0; }
       .jobs { grid-template-columns: 1fr; }
@@ -149,7 +151,14 @@
       <div class="muted" id="modal-meta"></div>
       <div class="muted" id="modal-tags"></div>
       <p id="modal-desc"></p>
+      <div class="field">
+        <input id="modal-profile" type="text" placeholder="Profil (ex: Backend Python)" />
+      </div>
+      <div class="field">
+        <input id="modal-model" type="text" placeholder="Modèle (ex: gpt-4.1)" value="gpt-4.1" />
+      </div>
       <div class="actions">
+        <button id="modal-adapt" class="btn-yes">Adapt CV</button>
         <button id="modal-open" class="btn-open">Ouvrir</button>
         <button id="modal-close">Fermer</button>
       </div>
@@ -177,6 +186,9 @@
     const modalMeta = document.getElementById('modal-meta');
     const modalTags = document.getElementById('modal-tags');
     const modalDesc = document.getElementById('modal-desc');
+    const modalProfile = document.getElementById('modal-profile');
+    const modalModel = document.getElementById('modal-model');
+    const modalAdapt = document.getElementById('modal-adapt');
     const modalOpen = document.getElementById('modal-open');
     const modalClose = document.getElementById('modal-close');
     searchEl.value = state.query;
@@ -227,6 +239,25 @@
       fetchAll();
     }
 
+    async function adaptCv(jobId) {
+      const profile_label = modalProfile.value.trim() || 'Profil générique';
+      const model = modalModel.value.trim() || 'gpt-4.1';
+      setLoading(true);
+      const res = await fetch('/adapt-cv', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ job_id: jobId, profile_label, model })
+      });
+      if (!res.ok) {
+        showToast('Erreur adapt-cv');
+        setLoading(false);
+        return;
+      }
+      showToast('CV adapté (stub)');
+      setLoading(false);
+      fetchStats();
+    }
+
     function persist() {
       localStorage.setItem('jobtinder-ui', JSON.stringify({ status: state.status, query: state.query }));
     }
@@ -237,6 +268,7 @@
       modalTags.textContent = (job.tags || []).join(' · ');
       modalDesc.textContent = job.description || '';
       modalOpen.onclick = () => window.open(job.url || '#', '_blank');
+      modalAdapt.onclick = () => adaptCv(job.id);
       modalBackdrop.style.display = 'flex';
     }
 
