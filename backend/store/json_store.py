@@ -20,6 +20,8 @@ class JsonStore:
         self.jobs_file = self.data_dir / "jobs.json"
         self.state_file = self.data_dir / "state.json"
         self.cv_file = self.data_dir / "cv_variants.json"
+        self.cv_profile_file = self.data_dir / "cv_profile.json"
+        self.uploads_dir = self.data_dir / "uploads"
         self.sample_file = self.data_dir / "sample_jobs.json"
 
     def utc_now(self) -> str:
@@ -142,3 +144,76 @@ class JsonStore:
         jobs = self.load_json(self.sample_file, [])
         self.save_json(self.jobs_file, jobs)
         return len(jobs)
+
+    # --- CV Profile Management ---
+    
+    def get_cv_profile(self) -> Dict[str, Any]:
+        default = {
+            "name": "",
+            "email": "",
+            "phone": "",
+            "summary": "",
+            "skills": [],
+            "experience": [],
+            "education": [],
+            "uploaded_file": None,
+        }
+        return self.load_json(self.cv_profile_file, default)
+
+    def save_cv_profile(self, profile: Dict[str, Any]):
+        current = self.get_cv_profile()
+        current.update(profile)
+        current["updated_at"] = self.utc_now()
+        self.save_json(self.cv_profile_file, current)
+
+    def upload_cv_file(self, filename: str, content: bytes) -> Dict[str, Any]:
+        self.uploads_dir.mkdir(parents=True, exist_ok=True)
+        
+        # Save file
+        safe_name = f"cv_{self.utc_now().replace(':', '-').replace('+', '_')}_{filename}"
+        file_path = self.uploads_dir / safe_name
+        file_path.write_bytes(content)
+        
+        # Update profile with file reference
+        profile = self.get_cv_profile()
+        profile["uploaded_file"] = {
+            "filename": filename,
+            "path": str(file_path),
+            "size": len(content),
+            "uploaded_at": self.utc_now(),
+        }
+        self.save_json(self.cv_profile_file, profile)
+        
+        # TODO: Extract text from PDF/DOCX and populate profile fields
+        return {
+            "filename": filename,
+            "size": len(content),
+            "message": "File uploaded. Manual profile completion recommended.",
+        }
+
+    def list_cv_variants(self) -> List[Dict[str, Any]]:
+        return self.load_json(self.cv_file, [])
+
+    def get_cv_variant(self, variant_id: str) -> Dict[str, Any] | None:
+        variants = self.load_json(self.cv_file, [])
+        for v in variants:
+            if v.get("id") == variant_id:
+                return v
+        return None
+
+    def list_applications(self) -> List[Dict[str, Any]]:
+        state = self.load_json(self.state_file, {"swipes": {}, "applications": []})
+        applications = state.get("applications", [])
+        
+        # Enrich with job data
+        jobs = {job.get("id"): job for job in self.load_json(self.jobs_file, [])}
+        enriched = []
+        for app in applications:
+            job = jobs.get(app.get("job_id"), {})
+            enriched.append({
+                **app,
+                "job_title": job.get("title", "Unknown"),
+                "company": job.get("company", "Unknown"),
+            })
+        return enriched
+
