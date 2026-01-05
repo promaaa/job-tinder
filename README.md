@@ -42,7 +42,7 @@ uvicorn backend.api.app:app --reload
 make api
 ```
 
-UI: une interface légère est servie sur `/ui` (liste, recherche, swipe yes/no) quand `frontend/` est présent.
+UI: une interface légère est servie sur `/ui` (liste, recherche, swipe yes/no, stats live, modal détail) quand `frontend/` est présent.
 
 Store:
 - Par défaut `STORE=json` (fichiers dans `data/`).

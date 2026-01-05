@@ -89,6 +89,7 @@
     .actions { display: flex; gap: 8px; }
     .btn-yes { border-color: var(--success); color: var(--success); }
     .btn-no { border-color: var(--danger); color: var(--danger); }
+    .btn-open { border-color: var(--accent); color: var(--accent); }
     .status-dot {
       width: 10px; height: 10px; border-radius: 50%; display: inline-block; margin-right: 6px;
     }
@@ -96,6 +97,32 @@
     .dot-yes { background: var(--success); }
     .dot-no { background: var(--danger); }
     .empty { text-align: center; padding: 80px 20px; color: var(--muted); }
+    .toast {
+      position: fixed; top: 12px; right: 12px;
+      padding: 10px 14px; border-radius: 12px;
+      background: rgba(248,113,113,0.12);
+      border: 1px solid rgba(248,113,113,0.4);
+      color: #fecdd3;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.3);
+      display: none;
+      z-index: 20;
+    }
+    .loading-bar {
+      position: fixed; top: 0; left: 0; height: 3px; background: linear-gradient(90deg, var(--accent), #8b5cf6);
+      width: 0%; transition: width 0.2s ease; z-index: 25;
+    }
+    .modal-backdrop {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: none;
+      align-items: center; justify-content: center; z-index: 30;
+    }
+    .modal {
+      background: #0b1220; border: 1px solid var(--border); border-radius: 16px;
+      padding: 20px; max-width: 720px; width: 92%; max-height: 80vh; overflow: auto;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.45);
+    }
+    .modal h3 { margin: 0 0 6px 0; }
+    .modal .muted { margin-bottom: 10px; }
+    .modal .actions { justify-content: flex-end; }
     @media (max-width: 600px) {
       header { position: sticky; top: 0; }
       .jobs { grid-template-columns: 1fr; }
@@ -114,6 +141,20 @@
   </header>
   <main class="jobs" id="jobs"></main>
   <div class="empty" id="empty" style="display:none;">Aucune offre trouvée.</div>
+  <div class="toast" id="toast"></div>
+  <div class="loading-bar" id="loading"></div>
+  <div class="modal-backdrop" id="modal-backdrop">
+    <div class="modal" id="modal">
+      <h3 id="modal-title"></h3>
+      <div class="muted" id="modal-meta"></div>
+      <div class="muted" id="modal-tags"></div>
+      <p id="modal-desc"></p>
+      <div class="actions">
+        <button id="modal-open" class="btn-open">Ouvrir</button>
+        <button id="modal-close">Fermer</button>
+      </div>
+    </div>
+  </div>
 
   <script>
     const statusFilters = [
@@ -129,6 +170,15 @@
     const emptyEl = document.getElementById('empty');
     const statsEl = document.getElementById('stats');
     const searchEl = document.getElementById('search');
+    const toastEl = document.getElementById('toast');
+    const loadingEl = document.getElementById('loading');
+    const modalBackdrop = document.getElementById('modal-backdrop');
+    const modalTitle = document.getElementById('modal-title');
+    const modalMeta = document.getElementById('modal-meta');
+    const modalTags = document.getElementById('modal-tags');
+    const modalDesc = document.getElementById('modal-desc');
+    const modalOpen = document.getElementById('modal-open');
+    const modalClose = document.getElementById('modal-close');
     searchEl.value = state.query;
 
     function renderFilters() {
@@ -149,22 +199,50 @@
       return span;
     }
 
-    async function swipe(jobId, decision) {
+    function showToast(msg) {
+      toastEl.textContent = msg;
+      toastEl.style.display = 'block';
+      clearTimeout(window.__toastTimer);
+      window.__toastTimer = setTimeout(() => { toastEl.style.display = 'none'; }, 2200);
+    }
+
+    function setLoading(active) {
+      loadingEl.style.width = active ? '100%' : '0%';
+      if (!active) setTimeout(() => loadingEl.style.width = '0%', 180);
+    }
+
+    async function swipe(jobId, decision, buttons) {
+      if (buttons) buttons.forEach(b => b.disabled = true);
+      setLoading(true);
       const res = await fetch('/swipes', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ job_id: jobId, decision })
       });
       if (!res.ok) {
-        alert('Erreur swipe');
-        return;
+        showToast('Erreur swipe');
       }
+      setLoading(false);
+      if (buttons) buttons.forEach(b => b.disabled = false);
       fetchAll();
     }
 
     function persist() {
       localStorage.setItem('jobtinder-ui', JSON.stringify({ status: state.status, query: state.query }));
     }
+
+    function openModal(job) {
+      modalTitle.textContent = `${job.title || 'Sans titre'} @ ${job.company || '?'}`;
+      modalMeta.textContent = `${job.employment_type || ''} · Remote: ${job.is_remote ? 'oui' : 'non'} · ${job.seniority || ''}`;
+      modalTags.textContent = (job.tags || []).join(' · ');
+      modalDesc.textContent = job.description || '';
+      modalOpen.onclick = () => window.open(job.url || '#', '_blank');
+      modalBackdrop.style.display = 'flex';
+    }
+
+    function closeModal() { modalBackdrop.style.display = 'none'; }
+    modalBackdrop.addEventListener('click', (e) => { if (e.target === modalBackdrop) closeModal(); });
+    modalClose.addEventListener('click', closeModal);
 
     function renderJobs(items) {
       jobsEl.innerHTML = '';
@@ -214,14 +292,15 @@
         const yesBtn = document.createElement('button');
         yesBtn.textContent = 'Yes';
         yesBtn.className = 'btn-yes';
-        yesBtn.onclick = () => swipe(job.id, 'yes');
+        yesBtn.onclick = () => swipe(job.id, 'yes', [yesBtn, noBtn]);
         const noBtn = document.createElement('button');
         noBtn.textContent = 'No';
         noBtn.className = 'btn-no';
-        noBtn.onclick = () => swipe(job.id, 'no');
+        noBtn.onclick = () => swipe(job.id, 'no', [yesBtn, noBtn]);
         const openBtn = document.createElement('button');
         openBtn.textContent = 'Ouvrir';
-        openBtn.onclick = () => window.open(job.url || '#', '_blank');
+        openBtn.className = 'btn-open';
+        openBtn.onclick = () => openModal(job);
         actions.append(yesBtn, noBtn, openBtn);
         card.appendChild(actions);
 
@@ -232,13 +311,16 @@
     async function fetchJobs() {
       const params = new URLSearchParams({ status: state.status });
       if (state.query.trim()) params.set('query', state.query.trim());
+      setLoading(true);
       const res = await fetch('/jobs?' + params.toString());
       if (!res.ok) {
         jobsEl.innerHTML = '<div class="empty">Erreur de chargement.</div>';
+        setLoading(false);
         return;
       }
       const data = await res.json();
       renderJobs(data.items || []);
+      setLoading(false);
     }
 
     async function fetchStats() {
