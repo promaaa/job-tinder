@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="assets/logo.png" alt="Job Tinder Logo" width="200">
+  <img src="assets/logo.png" alt="Job Tinder Logo" width="500">
   <h1>Job Tinder (prototype)</h1>
 </div>
 
