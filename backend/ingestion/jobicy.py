@@ -27,7 +27,9 @@ class JobicySource(JobSource):
         limit: int = 25,
         **kwargs
     ) -> List[JobData]:
-        """Search Jobicy job listings."""
+        """Search Jobicy job listings - prioritizing recent jobs."""
+        from datetime import timedelta
+        
         async with httpx.AsyncClient(timeout=30) as client:
             params = {
                 "count": min(limit * 3, 50),  # Get more to filter
@@ -56,6 +58,42 @@ class JobicySource(JobSource):
             
             jobs = data.get("jobs", [])
             
+            # Sort by publication date (most recent first)
+            def get_pub_date(job):
+                pub = job.get("pubDate")
+                if pub:
+                    try:
+                        return datetime.fromisoformat(pub.replace("Z", "+00:00"))
+                    except:
+                        try:
+                            # Try other formats
+                            return datetime.strptime(pub, "%Y-%m-%d")
+                        except:
+                            pass
+                return datetime.min
+            
+            jobs.sort(key=get_pub_date, reverse=True)
+            
+            # Filter by freshness (default: last 48 hours)
+            hours_old = kwargs.get("hours_old", 48)
+            cutoff = datetime.now() - timedelta(hours=hours_old)
+            fresh_jobs = []
+            for job in jobs:
+                pub = job.get("pubDate")
+                if pub:
+                    try:
+                        job_date = datetime.fromisoformat(pub.replace("Z", "+00:00"))
+                        if job_date.replace(tzinfo=None) >= cutoff:
+                            fresh_jobs.append(job)
+                            continue
+                    except:
+                        pass
+                # Include if we need more
+                if len(fresh_jobs) < limit:
+                    fresh_jobs.append(job)
+            
+            jobs = fresh_jobs if fresh_jobs else jobs
+            
             # Filter by query if specific keywords provided
             if query and query.strip():
                 filtered = []
@@ -67,11 +105,11 @@ class JobicySource(JobSource):
                         industries = []
                     industries_str = " ".join(str(i) for i in industries)
                     searchable = f"{job.get('jobTitle', '')} {job.get('companyName', '')} {job.get('jobDescription', '')} {industries_str}".lower()
-                    # More lenient matching - check if any word from query matches
+                    # Check if ALL words from query match
                     query_words = query_lower.split()
-                    if any(word in searchable for word in query_words):
+                    if all(word in searchable for word in query_words):
                         filtered.append(job)
-                jobs = filtered if filtered else jobs  # Fall back to all if no matches
+                jobs = filtered
             
             return [self._parse_job(job) for job in jobs[:limit]]
 

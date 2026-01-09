@@ -1,0 +1,47 @@
+[
+  {
+    "id": "c-001",
+    "name": "Sarah Connor",
+    "email": "sarah.connor@tesla.example.com",
+    "role": "Senior Technical Recruiter",
+    "company": "Tesla",
+    "field": "Embedded Systems / Autopilot",
+    "source": "manual"
+  },
+  {
+    "id": "c-002",
+    "name": "Jean-Luc Picard",
+    "email": "jl.picard@airbus.example.com",
+    "role": "Talent Acquisition Manager",
+    "company": "Airbus",
+    "field": "Avionics / Embedded",
+    "source": "manual"
+  },
+  {
+    "id": "c-003",
+    "name": "Grace Hopper",
+    "email": "grace@nvidia.example.com",
+    "role": "Engineering Recruiter",
+    "company": "NVIDIA",
+    "field": "Embedded AI / Edge Computing",
+    "source": "manual"
+  },
+  {
+    "id": "c-004",
+    "name": "Ada Lovelace",
+    "email": "ada@thales.example.com",
+    "role": "HR Partner Defense & Security",
+    "company": "Thales",
+    "field": "Real-time Systems",
+    "source": "manual"
+  },
+  {
+    "id": "c-005",
+    "name": "Linus Torvalds",
+    "email": "linus@intel.example.com",
+    "role": "Technical Sourcer",
+    "company": "Intel",
+    "field": "Firmware / Kernel",
+    "source": "manual"
+  }
+]

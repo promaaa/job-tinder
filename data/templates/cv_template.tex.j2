@@ -1,0 +1,64 @@
+\documentclass[a4paper,10pt]{article}
+\usepackage[left=2cm, right=2cm, top=2cm, bottom=2cm]{geometry}
+\usepackage{titlesec}
+\usepackage{enumitem}
+\usepackage{hyperref}
+
+% Formatting
+\titleformat{\section}{\large\bfseries\uppercase}{}{0em}{}[\titlerule]
+\titlespacing{\section}{0pt}{10pt}{5pt}
+
+\begin{document}
+
+% Header
+\begin{center}
+    {\Huge \textbf{\VAR{basics.name}}} \\
+    \vspace{2mm}
+    \textbf{\VAR{target_job} @ \VAR{target_company}} \\ % Adapted Title
+    \vspace{2mm}
+    \VAR{basics.location.city}, \VAR{basics.location.country} | \VAR{basics.phone} | \VAR{basics.email} \\
+    \href{\VAR{basics.profiles[0].url}}{LinkedIn} | \href{\VAR{basics.profiles[1].url}}{GitHub}
+\end{center}
+
+% Skills
+\section{Skills}
+\begin{itemize}[leftmargin=*, noitemsep]
+\BLOCK{ for category in skills }
+    \item \textbf{\VAR{category.category}:} \VAR{', '.join(category.items)}
+\BLOCK{ endfor }
+\end{itemize}
+
+% Experience
+\section{Experience}
+\BLOCK{ for exp in experience }
+\noindent \textbf{\VAR{exp.position}} \hfill \VAR{exp.startDate} -- \VAR{exp.endDate} \\
+\textit{\VAR{exp.company}}
+\begin{itemize}[leftmargin=*, noitemsep]
+    \BLOCK{ for highlight in exp.highlights }
+    \item \VAR{highlight}
+    \BLOCK{ endfor }
+\end{itemize}
+\vspace{2mm}
+\BLOCK{ endfor }
+
+% Adapted Projects
+\section{Selected Projects}
+\BLOCK{ for project in projects }
+\noindent \textbf{\VAR{project.name}} \hfill \textit{\VAR{', '.join(project.tags)}} \\
+\VAR{project.description}
+\begin{itemize}[leftmargin=*, noitemsep]
+    \BLOCK{ for highlight in project.highlights }
+    \item \VAR{highlight}
+    \BLOCK{ endfor }
+\end{itemize}
+\vspace{2mm}
+\BLOCK{ endfor }
+
+% Education
+\section{Education}
+\BLOCK{ for edu in education }
+\noindent \textbf{\VAR{edu.institution}} \hfill \VAR{edu.startDate} -- \VAR{edu.endDate} \\
+\VAR{edu.studyType} in \VAR{edu.area}
+\BLOCK{ endfor }
+
+\end{document}

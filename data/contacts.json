@@ -1,0 +1,71 @@
+[
+  {
+    "id": "c-001",
+    "name": "Sarah Connor",
+    "email": "sarah.connor@tesla.example.com",
+    "role": "Senior Technical Recruiter",
+    "company": "Tesla",
+    "field": "Embedded Systems / Autopilot",
+    "source": "manual"
+  },
+  {
+    "id": "c-002",
+    "name": "Jean-Luc Picard",
+    "email": "jl.picard@airbus.example.com",
+    "role": "Talent Acquisition Manager",
+    "company": "Airbus",
+    "field": "Avionics / Embedded",
+    "source": "manual"
+  },
+  {
+    "id": "c-003",
+    "name": "Grace Hopper",
+    "email": "grace@nvidia.example.com",
+    "role": "Engineering Recruiter",
+    "company": "NVIDIA",
+    "field": "Embedded AI / Edge Computing",
+    "source": "manual"
+  },
+  {
+    "id": "c-004",
+    "name": "Ada Lovelace",
+    "email": "ada@thales.example.com",
+    "role": "HR Partner Defense & Security",
+    "company": "Thales",
+    "field": "Real-time Systems",
+    "source": "manual"
+  },
+  {
+    "id": "c-005",
+    "name": "Linus Torvalds",
+    "email": "linus@intel.example.com",
+    "role": "Technical Sourcer",
+    "company": "Intel",
+    "field": "Firmware / Kernel",
+    "source": "manual"
+  },
+  {
+    "id": "c-006",
+    "created_at": "2026-01-09T09:41:40.446951+00:00",
+    "name": "Bruce Wayne",
+    "email": "bruce@wayne.ent",
+    "company": "Wayne Enterprises",
+    "role": "CEO"
+  },
+  {
+    "id": "c-007",
+    "created_at": "2026-01-09T09:41:40.447360+00:00",
+    "name": "Clark Kent",
+    "email": "clark@dailyplanet.com",
+    "company": "Daily Planet",
+    "role": "Journalist"
+  },
+  {
+    "id": "c-008",
+    "created_at": "2026-01-09T09:41:40.447523+00:00",
+    "name": "Diana Prince",
+    "email": "diana@museum.louvre.fr",
+    "company": "Louvre",
+    "role": "Curator"
+  }
+]

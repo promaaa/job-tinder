@@ -1,0 +1,22 @@
+{
+  "full_name": "John Doe",
+  "email": "john@example.com",
+  "phone": "",
+  "linkedin_url": "",
+  "github_url": "",
+  "portfolio_url": "",
+  "location": "",
+  "current_title": "Software Engineer",
+  "years_experience": 0,
+  "skills": [],
+  "cv_filename": null,
+  "cover_letter_template": "Bonjour,\n\nJe suis tr\u00e8s int\u00e9ress\u00e9(e) par le poste de {job_title} chez {company}.\n\n{custom_intro}\n\nVous trouverez mon CV en pi\u00e8ce jointe. Je serais ravi(e) de discuter de cette opportunit\u00e9 avec vous.\n\nCordialement,\n{full_name}\n{email}\n{phone}",
+  "custom_intro": "Avec mon exp\u00e9rience en d\u00e9veloppement logiciel et ma passion pour l'innovation, je pense pouvoir apporter une r\u00e9elle valeur \u00e0 votre \u00e9quipe.",
+  "auto_apply_enabled": false,
+  "smtp_configured": false,
+  "smtp_host": "",
+  "smtp_port": 587,
+  "smtp_user": "",
+  "smtp_password": "",
+  "applications_count": 0
+}

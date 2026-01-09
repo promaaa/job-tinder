@@ -16,6 +16,8 @@ from .arbeitnow import ArbeitnowSource
 from .jobicy import JobicySource
 from .himalayas import HimalayasSource
 from .findwork import FindworkSource
+from .jobspy_adapter import JobSpySource
+from .jobteaser import JobTeaserSource
 
 
 class JobAggregator:
@@ -34,21 +36,29 @@ class JobAggregator:
         self.sources["himalayas"] = HimalayasSource()
         self.sources["findwork"] = FindworkSource()
         
+        # Scrapers (No API Key required but fragile)
+        self.sources["wttj"] = WelcomeToTheJungleSource()
+        self.sources["linkedin"] = JobSpySource(sources=["linkedin"])
+        self.sources["indeed"] = JobSpySource(sources=["indeed"])
+        self.sources["glassdoor"] = JobSpySource(sources=["glassdoor"])
+        self.sources["jobteaser"] = JobTeaserSource()
+        
         # Requires API keys
         self.sources["france_travail"] = FranceTravailSource()
         self.sources["adzuna"] = AdzunaSource()
-        
-        # Scraper (may break)
-        self.sources["wttj"] = WelcomeToTheJungleSource()
 
     def get_free_sources(self) -> List[str]:
         """Return list of sources that work without API keys."""
-        return ["remoteok", "arbeitnow", "jobicy", "himalayas", "findwork"]
+        return [
+            "remoteok", "arbeitnow", "jobicy", "himalayas", "findwork", 
+            "wttj", "linkedin", "indeed", "glassdoor", "jobteaser"
+        ]
 
     def list_sources(self) -> List[Dict[str, Any]]:
         """List available sources and their status."""
         result = []
         free_sources = self.get_free_sources()
+        scrapers = ["wttj", "linkedin", "indeed", "glassdoor", "jobteaser"]
         
         for name, source in self.sources.items():
             status = "available"
@@ -59,17 +69,17 @@ class JobAggregator:
                 requires_key = True
                 if not os.getenv("FRANCE_TRAVAIL_CLIENT_ID"):
                     status = "needs_config"
-                    note = "Set FRANCE_TRAVAIL_CLIENT_ID and FRANCE_TRAVAIL_CLIENT_SECRET"
+                    note = "Set FRANCE_TRAVAIL_CLIENT_ID"
             
             elif name == "adzuna":
                 requires_key = True
                 if not os.getenv("ADZUNA_APP_ID"):
                     status = "needs_config"
-                    note = "Set ADZUNA_APP_ID and ADZUNA_APP_KEY"
+                    note = "Set ADZUNA_APP_ID"
             
-            elif name == "wttj":
+            elif name in scrapers:
                 status = "scraper"
-                note = "HTML scraper, may break if site changes"
+                note = "HTML scraper or internal API wrapper"
             
             result.append({
                 "name": name,
@@ -87,6 +97,7 @@ class JobAggregator:
         location: Optional[str] = None,
         sources: Optional[List[str]] = None,
         limit_per_source: int = 20,
+        hours_old: int = 24,  # Only jobs from last 24h by default
     ) -> Dict[str, Any]:
         """
         Search across multiple sources.
@@ -104,7 +115,7 @@ class JobAggregator:
         source_names = []
         
         for name, source in active_sources.items():
-            tasks.append(self._search_source(source, query, location, limit_per_source))
+            tasks.append(self._search_source(source, query, location, limit_per_source, hours_old))
             source_names.append(name)
         
         results = await asyncio.gather(*tasks, return_exceptions=True)
@@ -152,10 +163,11 @@ class JobAggregator:
         query: str,
         location: Optional[str],
         limit: int,
+        hours_old: int = 24,
     ) -> List[JobData]:
         """Search a single source with error handling."""
         try:
-            return await source.search(query, location, limit)
+            return await source.search(query, location, limit, hours_old=hours_old)
         except Exception as e:
             # Re-raise to be caught by gather
             raise Exception(f"{source.name}: {str(e)}")

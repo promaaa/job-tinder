@@ -26,7 +26,7 @@ class RemoteOKSource(JobSource):
         limit: int = 25,
         **kwargs
     ) -> List[JobData]:
-        """Search RemoteOK job listings."""
+        """Search RemoteOK job listings - prioritizing recent jobs."""
         async with httpx.AsyncClient(timeout=30) as client:
             # RemoteOK API returns all jobs, we filter locally
             response = await client.get(
@@ -41,12 +41,30 @@ class RemoteOKSource(JobSource):
             # First item is metadata, skip it
             jobs = data[1:] if len(data) > 1 else []
             
+            # Sort by date (most recent first) - RemoteOK has 'epoch' timestamp
+            jobs.sort(key=lambda j: j.get("epoch", 0), reverse=True)
+            
+            # Filter by freshness (default: last 48 hours)
+            hours_old = kwargs.get("hours_old", 48)
+            now = datetime.now().timestamp()
+            max_age = hours_old * 3600  # Convert to seconds
+            
+            fresh_jobs = []
+            for job in jobs:
+                job_epoch = job.get("epoch", 0)
+                if job_epoch > 0 and (now - job_epoch) <= max_age:
+                    fresh_jobs.append(job)
+            
+            # Use fresh jobs if available, otherwise fall back to all jobs
+            jobs_to_filter = fresh_jobs if fresh_jobs else jobs[:100]
+            
             # Filter by query
             query_lower = query.lower()
+            query_terms = query_lower.split()
             filtered = []
-            for job in jobs:
+            for job in jobs_to_filter:
                 searchable = f"{job.get('position', '')} {job.get('company', '')} {job.get('description', '')} {' '.join(job.get('tags', []))}".lower()
-                if query_lower in searchable:
+                if all(term in searchable for term in query_terms):
                     filtered.append(job)
             
             # Apply limit

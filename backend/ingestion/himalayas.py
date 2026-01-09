@@ -26,7 +26,9 @@ class HimalayasSource(JobSource):
         limit: int = 25,
         **kwargs
     ) -> List[JobData]:
-        """Search Himalayas job listings."""
+        """Search Himalayas job listings - prioritizing recent jobs."""
+        from datetime import datetime, timedelta
+        
         async with httpx.AsyncClient(timeout=30) as client:
             params = {
                 "limit": min(limit * 3, 100),
@@ -44,6 +46,38 @@ class HimalayasSource(JobSource):
             
             jobs = data.get("jobs", [])
             
+            # Sort by publication date (most recent first)
+            def get_pub_date(job):
+                pub = job.get("pubDate")
+                if pub:
+                    try:
+                        return datetime.fromisoformat(pub.replace("Z", "+00:00"))
+                    except:
+                        pass
+                return datetime.min.replace(tzinfo=None)
+            
+            jobs.sort(key=get_pub_date, reverse=True)
+            
+            # Filter by freshness (default: last 48 hours)
+            hours_old = kwargs.get("hours_old", 48)
+            cutoff = datetime.now().astimezone() - timedelta(hours=hours_old)
+            fresh_jobs = []
+            for job in jobs:
+                pub = job.get("pubDate")
+                if pub:
+                    try:
+                        job_date = datetime.fromisoformat(pub.replace("Z", "+00:00"))
+                        if job_date >= cutoff:
+                            fresh_jobs.append(job)
+                            continue
+                    except:
+                        pass
+                # Include jobs without date only if we don't have enough
+                if len(fresh_jobs) < limit:
+                    fresh_jobs.append(job)
+            
+            jobs = fresh_jobs if fresh_jobs else jobs
+            
             # Filter by query - more lenient matching
             if query and query.strip():
                 query_lower = query.lower()
@@ -57,10 +91,10 @@ class HimalayasSource(JobSource):
                         categories_str = str(categories) if categories else ""
                         
                     searchable = f"{job.get('title', '')} {job.get('companyName', '')} {job.get('description', '')} {categories_str}".lower()
-                    # Match any word from query
-                    if any(word in searchable for word in query_words):
+                    # Match ALL words from query
+                    if all(word in searchable for word in query_words):
                         filtered.append(job)
-                jobs = filtered if filtered else jobs[:limit]  # Fall back to top jobs
+                jobs = filtered
             
             return [self._parse_job(job) for job in jobs[:limit]]
 

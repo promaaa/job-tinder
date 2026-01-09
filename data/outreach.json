@@ -1,0 +1,45 @@
+[
+  {
+    "id": "msg-0001",
+    "contact_id": "c-001",
+    "status": "sent",
+    "subject": "Embedded Systems Engineer regarding opportunities at Tesla",
+    "body": "Hi Sarah,\n\nMy name is , and I'm an Embedded Systems Engineer passionate about Embedded Systems / Autopilot.\n\nI've been following Tesla's work in this space and I'm very impressed by your recent developments. I have strong experience in C/C++, RTOS, and hardware interfacing that aligns well with your engineering challenges.\n\nI would love to connect and briefly discuss how my background could bring value to the Tesla engineering team.\n\nBest regards,\n\n\n[Link to Portfolio/LinkedIn]\n",
+    "generated_via": "stub-ai",
+    "created_at": "2026-01-09T09:10:06.597776+00:00",
+    "sent_at": "2026-01-09T09:10:11.706501"
+  },
+  {
+    "id": "msg-0002",
+    "contact_id": "c-003",
+    "status": "draft",
+    "subject": "Engineer regarding opportunities at NVIDIA",
+    "body": "Hi Grace,\n\nMy name is , and I'm an Engineer passionate about Embedded AI / Edge Computing.\n\nI've been following NVIDIA's work in this space and I'm very impressed by your recent developments. I have strong experience in  that aligns well with your engineering challenges.\n\nI would love to connect and briefly discuss how my background could bring value to the NVIDIA engineering team.\n\nBest regards,\n\n\n[Link to Portfolio/LinkedIn]",
+    "attachments": [],
+    "generated_via": "stub-ai",
+    "created_at": "2026-01-09T11:30:18.079581+00:00",
+    "sent_at": null
+  },
+  {
+    "id": "msg-0003",
+    "contact_id": "c-002",
+    "status": "draft",
+    "subject": "Engineer regarding opportunities at Airbus",
+    "body": "Hi Jean-Luc,\n\nMy name is , and I'm an Engineer passionate about Avionics / Embedded.\n\nI've been following Airbus's work in this space and I'm very impressed by your recent developments. I have strong experience in  that aligns well with your engineering challenges.\n\nI would love to connect and briefly discuss how my background could bring value to the Airbus engineering team.\n\nBest regards,\n\n\n[Link to Portfolio/LinkedIn]",
+    "attachments": [],
+    "generated_via": "stub-ai",
+    "created_at": "2026-01-09T11:31:35.226192+00:00",
+    "sent_at": null
+  },
+  {
+    "id": "msg-0004",
+    "contact_id": "c-001",
+    "status": "draft",
+    "subject": "Engineer regarding opportunities at Tesla",
+    "body": "Hi Sarah,\n\nMy name is , and I'm an Engineer passionate about Embedded Systems / Autopilot.\n\nI've been following Tesla's work in this space and I'm very impressed by your recent developments. I have strong experience in  that aligns well with your engineering challenges.\n\nI would love to connect and briefly discuss how my background could bring value to the Tesla engineering team.\n\nBest regards,\n\n\n[Link to Portfolio/LinkedIn]",
+    "attachments": [],
+    "generated_via": "stub-ai",
+    "created_at": "2026-01-09T12:51:49.768591+00:00",
+    "sent_at": null
+  }
+]

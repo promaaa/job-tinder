@@ -43,10 +43,11 @@ class ArbeitnowSource(JobSource):
             
             # Filter by query
             query_lower = query.lower()
+            query_terms = query_lower.split()
             filtered = []
             for job in jobs:
                 searchable = f"{job.get('title', '')} {job.get('company_name', '')} {job.get('description', '')} {' '.join(job.get('tags', []))}".lower()
-                if query_lower in searchable:
+                if all(term in searchable for term in query_terms):
                     filtered.append(job)
             
             # Also filter by location if provided

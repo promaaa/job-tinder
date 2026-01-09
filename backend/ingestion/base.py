@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass, field, asdict
 from datetime import datetime
 from typing import List, Optional, Dict, Any
-import hashlib
+
 
 
 @dataclass
@@ -33,8 +33,11 @@ class JobData:
     @property
     def id(self) -> str:
         """Generate unique ID from source and source_id."""
+        import uuid
         key = f"{self.source}:{self.source_id}"
-        return hashlib.sha256(key.encode()).hexdigest()[:12]
+        # Use a constant namespace for deterministic IDs
+        NAMESPACE_JOB_TINDER = uuid.UUID('6ba7b810-9dad-11d1-80b4-00c04fd430c8') # DNS namespace as base
+        return str(uuid.uuid5(NAMESPACE_JOB_TINDER, key))
 
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dict for storage."""

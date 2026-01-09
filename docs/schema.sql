@@ -109,8 +109,36 @@ CREATE TABLE IF NOT EXISTS api_tokens (
   UNIQUE (user_id, provider)
 );
 
+-- Cold Outreach System
+CREATE TABLE IF NOT EXISTS contacts (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  name TEXT,
+  email TEXT NOT NULL,
+  role TEXT,
+  company TEXT,
+  field TEXT,
+  source TEXT, -- manual | imported | scraped
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  UNIQUE (user_id, email)
+);
+
+CREATE TABLE IF NOT EXISTS outreach_messages (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  contact_id UUID REFERENCES contacts(id) ON DELETE CASCADE,
+  status TEXT NOT NULL DEFAULT 'draft', -- draft | generated | queued | sent | failed
+  subject TEXT,
+  body TEXT,
+  generated_via TEXT, -- model name
+  sent_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
 -- Indexes utiles
 CREATE INDEX IF NOT EXISTS idx_jobs_title ON jobs USING gin (to_tsvector('simple', title));
 CREATE INDEX IF NOT EXISTS idx_jobs_company ON jobs (company);
 CREATE INDEX IF NOT EXISTS idx_swipes_user ON swipes (user_id);
 CREATE INDEX IF NOT EXISTS idx_applications_user ON applications (user_id);
+CREATE INDEX IF NOT EXISTS idx_contacts_user ON contacts (user_id);
+CREATE INDEX IF NOT EXISTS idx_outreach_contact ON outreach_messages (contact_id);

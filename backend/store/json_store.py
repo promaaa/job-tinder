@@ -23,6 +23,14 @@ class JsonStore:
         self.cv_profile_file = self.data_dir / "cv_profile.json"
         self.uploads_dir = self.data_dir / "uploads"
         self.sample_file = self.data_dir / "sample_jobs.json"
+        
+        # Contacts & Outreach
+        self.contacts_file = self.data_dir / "contacts.json"
+        self.outreach_file = self.data_dir / "outreach.json"
+        self.sample_contacts_file = self.data_dir / "sample_contacts.json"
+
+        # CV Adaptation (Bucket)
+        self.master_profile_file = self.data_dir / "master_profile.json"
 
     def utc_now(self) -> str:
         return datetime.now(timezone.utc).isoformat()
@@ -112,18 +120,28 @@ class JsonStore:
         return variant
 
     def ingest(self, jobs: List[Dict[str, Any]], replace: bool):
+        now = self.utc_now()
         if replace:
+            for job in jobs:
+                if "fetched_at" not in job:
+                    job["fetched_at"] = now
             self.save_json(self.jobs_file, jobs)
             return {"mode": "replace", "total": len(jobs)}
         current = self.load_json(self.jobs_file, [])
         index: Dict[str, Dict[str, Any]] = {job.get("id"): job for job in current}
+        added_count = 0
         for job in jobs:
             if "id" not in job:
                 raise ValueError("id_required")
-            index[job.get("id")] = job
+            job_id = job.get("id")
+            # Only add fetched_at if it's a new job
+            if job_id not in index:
+                job["fetched_at"] = now
+                added_count += 1
+            index[job_id] = job
         merged = list(index.values())
         self.save_json(self.jobs_file, merged)
-        return {"mode": "merge", "total": len(merged), "added": len(jobs)}
+        return {"mode": "merge", "total": len(merged), "added": added_count}
 
     def stats(self):
         jobs = self.load_json(self.jobs_file, [])
@@ -144,6 +162,21 @@ class JsonStore:
         jobs = self.load_json(self.sample_file, [])
         self.save_json(self.jobs_file, jobs)
         return len(jobs)
+
+    def delete_job(self, job_id: str) -> bool:
+        """Delete a job by ID. Returns True if deleted, False if not found."""
+        jobs = self.load_json(self.jobs_file, [])
+        original_count = len(jobs)
+        jobs = [j for j in jobs if j.get("id") != job_id]
+        if len(jobs) < original_count:
+            self.save_json(self.jobs_file, jobs)
+            # Also remove from swipes
+            state = self.load_json(self.state_file, {"swipes": {}, "applications": []})
+            if job_id in state.get("swipes", {}):
+                del state["swipes"][job_id]
+                self.save_json(self.state_file, state)
+            return True
+        return False
 
     # --- CV Profile Management ---
     
@@ -216,4 +249,87 @@ class JsonStore:
                 "company": job.get("company", "Unknown"),
             })
         return enriched
+
+    # --- CV Bucket / Master Profile ---
+
+    def get_master_profile(self) -> Dict[str, Any]:
+        return self.load_json(self.master_profile_file, {})
+
+    def save_master_profile(self, profile: Dict[str, Any]):
+        self.save_json(self.master_profile_file, profile)
+
+    # --- Contacts & Outreach ---
+
+    def load_contacts_sample(self):
+        contacts = self.load_json(self.sample_contacts_file, [])
+        self.save_json(self.contacts_file, contacts)
+        return len(contacts)
+
+    def list_contacts(self) -> List[Dict[str, Any]]:
+        return self.load_json(self.contacts_file, [])
+
+    def add_contact(self, contact: Dict[str, Any]):
+        contacts = self.load_json(self.contacts_file, [])
+        # Simple deduplication by email
+        email = contact.get("email")
+        if email:
+            contacts = [c for c in contacts if c.get("email") != email]
+        
+        contacts.append({
+            "id": contact.get("id") or f"c-{len(contacts)+1:03d}",
+            "created_at": self.utc_now(),
+            **contact
+        })
+        self.save_json(self.contacts_file, contacts)
+
+    def get_contact(self, contact_id: str) -> Dict[str, Any]:
+        contacts = self.load_json(self.contacts_file, [])
+        for c in contacts:
+            if c.get("id") == contact_id:
+                return c
+        raise KeyError("contact_not_found")
+
+    def create_outreach(self, contact_id: str, subject: str, body: str, generated_via: str = None, attachments: List[str] = None) -> Dict[str, Any]:
+        messages = self.load_json(self.outreach_file, [])
+        msg = {
+            "id": f"msg-{len(messages)+1:04d}",
+            "contact_id": contact_id,
+            "status": "draft",
+            "subject": subject,
+            "body": body,
+            "attachments": attachments or [],
+            "generated_via": generated_via,
+            "created_at": self.utc_now(),
+            "sent_at": None,
+        }
+        messages.append(msg)
+        self.save_json(self.outreach_file, messages)
+        return msg
+
+    def list_outreach(self) -> List[Dict[str, Any]]:
+        messages = self.load_json(self.outreach_file, [])
+        contacts = {c["id"]: c for c in self.load_json(self.contacts_file, [])}
+        enriched = []
+        for m in messages:
+            contact = contacts.get(m["contact_id"], {})
+            enriched.append({
+                **m,
+                "contact_name": contact.get("name", "Unknown"),
+                "contact_email": contact.get("email", "Unknown"),
+                "company": contact.get("company", "Unknown"),
+            })
+        return enriched
+
+    def update_outreach(self, msg_id: str, updates: Dict[str, Any]):
+        messages = self.load_json(self.outreach_file, [])
+        found = False
+        for m in messages:
+            if m["id"] == msg_id:
+                m.update(updates)
+                found = True
+                break
+        if not found:
+            raise KeyError("message_not_found")
+        self.save_json(self.outreach_file, messages)
+
 

@@ -1,0 +1,195 @@
+INFO:     Started server process [6441]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+INFO:     127.0.0.1:52662 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52925 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52925 - "GET /assets/index-CBhJiR04.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52926 - "GET /assets/index-YA1ZnMQl.css HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52926 - "GET /outreach HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52925 - "GET /stats HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52925 - "GET /jobs?status=pending HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52930 - "GET /sources HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52929 - "GET /scheduler/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52974 - "GET /sources HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52973 - "GET /scheduler/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53129 - "GET /ingestion HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53130 - "GET /assets/index-CBRiD-6u.css HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53129 - "GET /assets/index-CdZgBxNG.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53130 - "GET /sources HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53129 - "GET /scheduler/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53131 - "POST /scheduler/fetch HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53131 - "GET /scheduler/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53162 - "GET /jobs?status=pending HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53164 - "GET /stats HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53165 - "GET /outreach HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53165 - "GET /jobs?status=pending HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53219 - "GET /scheduler/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53220 - "GET /sources HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53219 - "GET /jobs?status=pending HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53238 - "GET /jobs?status=pending HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53240 - "GET /scheduler/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53241 - "GET /sources HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53270 - "GET /jobs?status=pending HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53306 - "GET /sources HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53305 - "GET /scheduler/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53306 - "GET /ingestion HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53305 - "GET /assets/index-CBRiD-6u.css HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:53306 - "GET /assets/index-CdZgBxNG.js HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:53305 - "GET /sources HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53306 - "GET /scheduler/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53312 - "POST /scheduler/fetch HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53312 - "GET /scheduler/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53312 - "GET /jobs?status=pending HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53312 - "POST /swipes HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53312 - "GET /jobs?status=pending HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53337 - "POST /swipes HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53337 - "GET /jobs?status=pending HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53366 - "GET /jobs?status=pending HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53477 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53478 - "GET /assets/index-CBRiD-6u.css HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53477 - "GET /assets/index-CdZgBxNG.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53477 - "GET /vite.svg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53477 - "GET /stats HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53478 - "GET /outreach HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53478 - "GET /sources HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53477 - "GET /scheduler/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53617 - "GET /jobs?status=pending HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53617 - "GET /swipe HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53617 - "GET /assets/index-CBRiD-6u.css HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:53618 - "GET /assets/index-CdZgBxNG.js HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:53617 - "GET /jobs?status=pending HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53617 - "GET /swipe HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53617 - "GET /jobs?status=pending HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53617 - "GET /swipe HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53617 - "GET /jobs?status=pending HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53659 - "GET /sources HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53658 - "GET /scheduler/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53697 - "GET /jobs?status=pending HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53709 - "GET /swipe HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53709 - "GET /jobs?status=pending HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53710 - "GET /sources HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53709 - "GET /scheduler/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53709 - "GET /ingestion HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53710 - "GET /sources HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53709 - "GET /scheduler/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53709 - "GET /ingestion HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53710 - "GET /sources HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53709 - "GET /scheduler/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53709 - "GET /ingestion HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53710 - "GET /sources HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53709 - "GET /scheduler/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54103 - "GET /sources HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54102 - "GET /scheduler/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54103 - "GET /ingestion HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54103 - "GET /assets/index-DZHVf4jg.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54102 - "GET /assets/index-CFAjewGP.css HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54102 - "GET /sources HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54103 - "GET /scheduler/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54110 - "GET /jobs/recent?limit=15 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:54103 - "GET /jobs/recent?limit=15 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:54103 - "GET /jobs/recent?limit=15 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:54103 - "GET /jobs/recent?limit=15 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:54103 - "POST /scheduler/fetch?sources=remoteok,arbeitnow,jobicy,himalayas,findwork,wttj HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54103 - "GET /scheduler/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54136 - "GET /jobs/recent?limit=15 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:54103 - "GET /jobs/recent?limit=15 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:54103 - "GET /jobs/recent?limit=15 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:54103 - "GET /jobs/recent?limit=15 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:54146 - "GET /jobs/recent?limit=15 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:54146 - "GET /jobs/recent?limit=15 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:54146 - "GET /jobs/recent?limit=15 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:54146 - "GET /jobs?status=pending HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54146 - "POST /swipes HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54146 - "GET /jobs?status=pending HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54146 - "POST /swipes HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54146 - "GET /jobs?status=pending HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54146 - "POST /swipes HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54146 - "GET /jobs?status=pending HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54146 - "POST /swipes HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54146 - "GET /jobs?status=pending HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54146 - "POST /swipes HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54146 - "GET /jobs?status=pending HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54146 - "POST /swipes HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54146 - "GET /jobs?status=pending HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54146 - "POST /swipes HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54146 - "GET /jobs?status=pending HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54146 - "POST /swipes HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54146 - "GET /jobs?status=pending HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54146 - "POST /swipes HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54146 - "GET /jobs?status=pending HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54146 - "POST /swipes HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54146 - "GET /jobs?status=pending HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54146 - "POST /swipes HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54146 - "GET /jobs?status=pending HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54146 - "POST /swipes HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54146 - "GET /jobs?status=pending HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54146 - "POST /swipes HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54146 - "GET /jobs?status=pending HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54146 - "POST /swipes HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54146 - "GET /jobs?status=pending HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54146 - "POST /swipes HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54146 - "GET /jobs?status=pending HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54183 - "GET /stats HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54184 - "GET /outreach HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54184 - "GET /cv HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54184 - "GET /contacts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54183 - "GET /outreach HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54184 - "GET /cv HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54184 - "GET /contacts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54187 - "GET /outreach HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54189 - "GET /sources HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54188 - "GET /scheduler/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54198 - "GET /contacts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54197 - "GET /outreach HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54197 - "GET /crm HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54197 - "GET /contacts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54198 - "GET /outreach HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54197 - "GET /outreach HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54198 - "GET /stats HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54197 - "GET /jobs?status=pending HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54201 - "GET /sources HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54199 - "GET /jobs/recent?limit=15 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:54200 - "GET /scheduler/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54201 - "GET /jobs/recent?limit=15 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:54201 - "GET /jobs/recent?limit=15 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:54223 - "GET /jobs/recent?limit=15 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:54201 - "POST /scheduler/fetch?sources=remoteok,arbeitnow,jobicy,himalayas,findwork,wttj HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54201 - "GET /scheduler/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54223 - "GET /jobs/recent?limit=15 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:54201 - "GET /jobs/recent?limit=15 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:54201 - "GET /jobs/recent?limit=15 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:54201 - "GET /jobs/recent?limit=15 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:54235 - "GET /ingestion HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54236 - "GET /sources HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54235 - "GET /scheduler/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54237 - "GET /jobs/recent?limit=15 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:54236 - "GET /ingestion HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54235 - "GET /sources HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54236 - "GET /scheduler/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54237 - "GET /jobs/recent?limit=15 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:54235 - "GET /jobs/recent?limit=15 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:54236 - "GET /jobs/recent?limit=15 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:54238 - "GET /ingestion HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54239 - "GET /assets/index-CFAjewGP.css HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54238 - "GET /assets/index-DZHVf4jg.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54238 - "GET /vite.svg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54238 - "GET /scheduler/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54239 - "GET /sources HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54240 - "GET /jobs/recent?limit=15 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:54241 - "GET /ingestion HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54241 - "GET /assets/index-DZHVf4jg.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54242 - "GET /assets/index-CFAjewGP.css HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54241 - "GET /vite.svg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54242 - "GET /sources HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54241 - "GET /scheduler/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54243 - "GET /jobs/recent?limit=15 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:54241 - "GET /jobs/recent?limit=15 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:54242 - "GET /jobs/recent?limit=15 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:54241 - "POST /scheduler/fetch?sources=remoteok,arbeitnow,jobicy,himalayas,findwork,wttj HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54241 - "GET /scheduler/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54241 - "GET /jobs/recent?limit=15 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:54274 - "GET /jobs/recent?limit=15 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:54274 - "GET /jobs/recent?limit=15 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:54274 - "GET /jobs/recent?limit=15 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:54274 - "GET /jobs/recent?limit=15 HTTP/1.1" 404 Not Found

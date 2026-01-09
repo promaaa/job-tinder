@@ -50,26 +50,52 @@ class PgStore:
         with self.conn() as conn:
             ensure_user(conn)
             with conn.cursor(row_factory=dict_row) as cur:
-                cur.execute(
-                    """
+                sql = """
                     SELECT j.*, COALESCE(s.decision, 'pending') AS decision, s.decided_at
                     FROM jobs j
-                    LEFT JOIN swipes s ON s.job_id = j.id AND s.user_id = %s
-                    ORDER BY j.ingested_at DESC
-                    """,
-                    (DEFAULT_USER_ID,),
-                )
-                rows = list(cur.fetchall())
-        results = []
-        for job in rows:
-            decision = job.get("decision", "pending")
-            if status != "all" and decision != status:
-                if not (status == "pending" and decision == "pending"):
-                    continue
-            if not job_matches(job, query, company, tags, remote, emp_type):
-                continue
-            results.append(job)
-        return results
+                    LEFT JOIN swipes s ON s.job_id = j.id AND s.user_id = %(user_id)s
+                    WHERE 1=1
+                """
+                params = {"user_id": DEFAULT_USER_ID}
+
+                # Filter by status
+                if status != "all":
+                    if status == "pending":
+                        sql += " AND s.decision IS NULL"
+                    else:
+                        sql += " AND s.decision = %(status)s"
+                        params["status"] = status
+
+                # Filter by query (title or description)
+                if query:
+                    sql += " AND (j.title ILIKE %(query)s OR j.description ILIKE %(query)s OR j.company ILIKE %(query)s)"
+                    params["query"] = f"%{query}%"
+
+                # Filter by company
+                if company:
+                    sql += " AND j.company ILIKE %(company)s"
+                    params["company"] = f"%{company}%"
+
+                # Filter by tags (overlap)
+                if tags:
+                    sql += " AND j.tags && %(tags)s"
+                    params["tags"] = tags
+
+                # Filter by remote
+                if remote == "true":
+                    sql += " AND j.is_remote = TRUE"
+                elif remote == "false":
+                    sql += " AND j.is_remote = FALSE"
+
+                # Filter by employment type
+                if emp_type:
+                    sql += " AND j.employment_type ILIKE %(emp_type)s"
+                    params["emp_type"] = f"%{emp_type}%"
+
+                sql += " ORDER BY j.ingested_at DESC"
+
+                cur.execute(sql, params)
+                return list(cur.fetchall())
 
     def get_job(self, job_id: str) -> Dict[str, Any]:
         with self.conn() as conn:
@@ -169,6 +195,35 @@ class PgStore:
         with self.conn() as conn:
             ensure_user(conn)
             with conn.cursor() as cur:
+                # Resolve sources
+                source_names = {job.get("source", "unknown") for job in jobs}
+                source_map = {}
+                for name in source_names:
+                    cur.execute("SELECT id FROM job_sources WHERE name = %s", (name,))
+                    row = cur.fetchone()
+                    if row:
+                        source_map[name] = row[0]
+                    else:
+                        cur.execute(
+                            "INSERT INTO job_sources (name, kind) VALUES (%s, 'api') RETURNING id",
+                            (name,)
+                        )
+                        source_map[name] = cur.fetchone()[0]
+
+                # Prepare jobs
+                prepared_jobs = []
+                for job in jobs:
+                    d = job.copy()
+                    d["source_id"] = source_map.get(job.get("source", "unknown"))
+                    d["source_job_id"] = job.get("source_id") # Map job.source_id -> sql.source_job_id
+                    # Ensure all fields are present for SQL
+                    d.setdefault("currency", None)
+                    d.setdefault("salary_min", None)
+                    d.setdefault("salary_max", None)
+                    d.setdefault("tags", [])
+                    d.setdefault("is_remote", False)
+                    prepared_jobs.append(d)
+
                 if replace:
                     cur.execute("TRUNCATE jobs RESTART IDENTITY CASCADE")
                 cur.executemany(
@@ -180,7 +235,7 @@ class PgStore:
                     ) VALUES (
                         %(id)s, %(source_id)s, %(source_job_id)s, %(title)s, %(company)s, %(location)s,
                         %(employment_type)s, %(seniority)s, %(salary_min)s, %(salary_max)s, %(currency)s,
-                        COALESCE(%(is_remote)s, false), %(url)s, %(description)s, %(tags)s, %(published_at)s
+                        %(is_remote)s, %(url)s, %(description)s, %(tags)s, %(published_at)s
                     )
                     ON CONFLICT (id) DO UPDATE SET
                         source_id = EXCLUDED.source_id,
@@ -199,7 +254,7 @@ class PgStore:
                         tags = EXCLUDED.tags,
                         published_at = EXCLUDED.published_at
                     """,
-                    jobs,
+                    prepared_jobs,
                 )
             conn.commit()
         return {"mode": "replace" if replace else "merge", "total": len(jobs)}

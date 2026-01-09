@@ -1,0 +1,14 @@
+Subject: {{ profile.title }} regarding opportunities at {{ contact.company }}
+
+Hi {{ contact.name.split(' ')[0] }},
+
+My name is {{ profile.name }}, and I'm an {{ profile.title }} passionate about {{ contact.field }}.
+
+I've been following {{ contact.company }}'s work in this space and I'm very impressed by your recent developments. I have strong experience in {{ profile.skills|join(', ') }} that aligns well with your engineering challenges.
+
+I would love to connect and briefly discuss how my background could bring value to the {{ contact.company }} engineering team.
+
+Best regards,
+
+{{ profile.name }}
+{{ profile.urls.linkedin if profile.urls and profile.urls.linkedin else '[Link to Portfolio/LinkedIn]' }}

@@ -1,0 +1,117 @@
+{
+  "basics": {
+    "name": "Alex Murphy",
+    "label": "Senior Embedded Systems Engineer",
+    "email": "alex.murphy@example.com",
+    "phone": "+33 6 12 34 56 78",
+    "location": {
+      "address": "123 Innovation Drive",
+      "city": "Toulouse",
+      "postalCode": "31000",
+      "country": "France"
+    },
+    "profiles": [
+      {
+        "network": "LinkedIn",
+        "url": "https://linkedin.com/in/alexmurphy"
+      },
+      {
+        "network": "GitHub",
+        "url": "https://github.com/alexmurphy"
+      }
+    ]
+  },
+  "skills": [
+    {
+      "category": "Languages",
+      "items": ["C", "C++", "Rust", "Python", "Assembly (ARM, x86)", "VHDL"]
+    },
+    {
+      "category": "Embedded",
+      "items": ["FreeRTOS", "Zephyr", "Yocto", "Linux Kernel", "STM32", "ESP32", "FPGA"]
+    },
+    {
+      "category": "Protocols",
+      "items": ["I2C", "SPI", "UART", "CAN", "MQTT", "BLE", "LoRaWAN"]
+    },
+    {
+      "category": "Tools",
+      "items": ["Git", "Docker", "Jenkins", "JTAG", "Oscilloscope", "Logic Analyzer"]
+    }
+  ],
+  "experience": [
+    {
+      "company": "RoboCorp",
+      "position": "Lead Firmware Engineer",
+      "startDate": "2021-01",
+      "endDate": "Present",
+      "summary": "Leading the development of safety-critical firmware for autonomous mobile robots.",
+      "highlights": [
+        "Architected a real-time navigation stack using C++17 on NVIDIA Jetson.",
+        "Reduced boot time by 40% through Yocto kernel optimization.",
+        "Implemented CANopen communication protocol for motor controllers."
+      ],
+      "tags": ["C++", "Robotics", "Yocto", "CAN", "Linux"]
+    },
+    {
+      "company": "SmartIoT Solutions",
+      "position": "Embedded Software Engineer",
+      "startDate": "2018-03",
+      "endDate": "2020-12",
+      "summary": "Developed low-power firmware for industrial IoT sensors.",
+      "highlights": [
+        "Ported FreeRTOS to a custom ARM Cortex-M4 board.",
+        "Designed a BLE mesh network for 500+ sensor nodes.",
+        "Implemented OTA update mechanism ensuring 99.9% reliability."
+      ],
+      "tags": ["C", "FreeRTOS", "BLE", "IoT", "ARM"]
+    }
+  ],
+  "projects": [
+    {
+      "name": "Rust-RTOS",
+      "description": "A lightweight real-time operating system written in Rust.",
+      "highlights": [
+        "Zero-cost abstractions for safe concurrency.",
+        "Implemented a priority-based preemptive scheduler."
+      ],
+      "tags": ["Rust", "OS Dev", "Safety"]
+    },
+    {
+      "name": "HomeAutomation-Hub",
+      "description": "Open-source smart home hub on Raspberry Pi.",
+      "highlights": [
+        "Integrated Zigbee and Z-Wave dongles.",
+        "Built a Python/FastAPI backend for local control."
+      ],
+      "tags": ["Python", "Linux", "Raspberry Pi", "Home Automation"]
+    },
+    {
+      "name": "FPGA-Vision",
+      "description": "Real-time edge detection on Xilinx FPGA.",
+      "highlights": [
+        "Implemented Sobel operator in VHDL.",
+        "Achieved 60fps processing at 1080p."
+      ],
+      "tags": ["FPGA", "VHDL", "Image Processing"]
+    },
+    {
+      "name": "Drone-Flight-Controller",
+      "description": "Custom flight controller for quadcopters.",
+      "highlights": [
+        "Sensor fusion (IMU, Barometer, GPS) using Kalman Filters.",
+        "PID control loop running at 1kHz on STM32."
+      ],
+      "tags": ["STM32", "C", "Control Theory", "Drone"]
+    }
+  ],
+  "education": [
+    {
+      "institution": "Tech University",
+      "area": "Embedded Systems Engineering",
+      "studyType": "Master",
+      "startDate": "2015-09",
+      "endDate": "2017-06"
+    }
+  ]
+}
