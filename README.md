@@ -1,4 +1,7 @@
-# Job Tinder (prototype)
+<div align="center">
+  <img src="assets/logo.png" alt="Job Tinder Logo" width="200">
+  <h1>Job Tinder (prototype)</h1>
+</div>
 
 Centralise des offres, swipe yes/no, stub d'adaptation de CV via CLI et API FastAPI.
 
